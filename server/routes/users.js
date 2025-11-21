@@ -48,20 +48,28 @@ router.put('/me', authenticateToken, (req, res) => {
         return res.status(500).json({ error: 'Error updating profile' });
       }
 
-      // Update interests
+      // Update interests (using transaction for consistency)
       if (interests && Array.isArray(interests)) {
-        db.run('DELETE FROM user_interests WHERE user_id = ?', [req.user.id]);
-        interests.forEach(interest => {
-          db.run('INSERT INTO user_interests (user_id, interest) VALUES (?, ?)', [req.user.id, interest]);
+        db.serialize(() => {
+          db.run('BEGIN TRANSACTION');
+          db.run('DELETE FROM user_interests WHERE user_id = ?', [req.user.id]);
+          interests.forEach(interest => {
+            db.run('INSERT INTO user_interests (user_id, interest) VALUES (?, ?)', [req.user.id, interest]);
+          });
+          db.run('COMMIT');
         });
       }
 
-      // Update courses
+      // Update courses (using transaction for consistency)
       if (courses && Array.isArray(courses)) {
-        db.run('DELETE FROM user_courses WHERE user_id = ?', [req.user.id]);
-        courses.forEach(course => {
-          db.run('INSERT INTO user_courses (user_id, course_code, course_name) VALUES (?, ?, ?)', 
-            [req.user.id, course.code, course.name]);
+        db.serialize(() => {
+          db.run('BEGIN TRANSACTION');
+          db.run('DELETE FROM user_courses WHERE user_id = ?', [req.user.id]);
+          courses.forEach(course => {
+            db.run('INSERT INTO user_courses (user_id, course_code, course_name) VALUES (?, ?, ?)', 
+              [req.user.id, course.code, course.name]);
+          });
+          db.run('COMMIT');
         });
       }
 

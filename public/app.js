@@ -458,7 +458,7 @@ async function loadMatches() {
               </div>
             ` : ''}
           </div>
-          <div class="match-score">${Math.round(match.match_score * 10)}%</div>
+          <div class="match-score">${Math.round(match.match_score * 100)}%</div>
         </div>
       `).join('');
     } else {
