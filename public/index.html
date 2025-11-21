@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Vibe - Connect, Learn, Engage</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Auth Section -->
+  <div id="auth-section" class="section">
+    <div class="container">
+      <div class="hero">
+        <h1>🎓 Campus Vibe</h1>
+        <p class="tagline">Your personalized hub for campus life</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="auth-form active">
+        <h2>Welcome Back!</h2>
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button onclick="login()" class="btn btn-primary">Login</button>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-form" class="auth-form">
+        <h2>Join Campus Vibe</h2>
+        <input type="text" id="reg-name" placeholder="Full Name" required>
+        <input type="email" id="reg-email" placeholder="Email" required>
+        <input type="password" id="reg-password" placeholder="Password" required>
+        <input type="text" id="reg-major" placeholder="Major (optional)">
+        <input type="number" id="reg-year" placeholder="Year (1-4)" min="1" max="4">
+        
+        <div class="form-group">
+          <label>Interests (comma-separated):</label>
+          <input type="text" id="reg-interests" placeholder="e.g., coding, music, sports">
+        </div>
+        
+        <div class="form-group">
+          <label>Courses (one per line):</label>
+          <textarea id="reg-courses" placeholder="CS101 Intro to Computer Science&#10;MATH201 Calculus II" rows="3"></textarea>
+        </div>
+        
+        <button onclick="register()" class="btn btn-primary">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App Section -->
+  <div id="app-section" class="section hidden">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-brand">🎓 Campus Vibe</div>
+      <div class="nav-links">
+        <a href="#" onclick="showView('feed')" class="nav-link active">Feed</a>
+        <a href="#" onclick="showView('events')" class="nav-link">Events</a>
+        <a href="#" onclick="showView('groups')" class="nav-link">Groups</a>
+        <a href="#" onclick="showView('matches')" class="nav-link">Matches</a>
+        <a href="#" onclick="showView('profile')" class="nav-link">Profile</a>
+        <a href="#" onclick="logout()" class="nav-link">Logout</a>
+      </div>
+    </nav>
+
+    <!-- Content Container -->
+    <div class="content-container">
+      <!-- Feed View -->
+      <div id="feed-view" class="view active">
+        <div class="view-header">
+          <h2>📱 Your Personalized Feed</h2>
+          <p>Events, groups, and resources tailored for you</p>
+        </div>
+        <div id="feed-content" class="feed-list"></div>
+      </div>
+
+      <!-- Events View -->
+      <div id="events-view" class="view">
+        <div class="view-header">
+          <h2>📅 Campus Events</h2>
+          <button onclick="showCreateEvent()" class="btn btn-primary">Create Event</button>
+        </div>
+        <div id="events-content" class="events-list"></div>
+      </div>
+
+      <!-- Groups View -->
+      <div id="groups-view" class="view">
+        <div class="view-header">
+          <h2>👥 Study Groups</h2>
+          <button onclick="showCreateGroup()" class="btn btn-primary">Create Group</button>
+        </div>
+        <div id="groups-content" class="groups-list"></div>
+      </div>
+
+      <!-- Matches View -->
+      <div id="matches-view" class="view">
+        <div class="view-header">
+          <h2>🎯 Find Study Partners</h2>
+          <p>Students with similar courses and interests</p>
+        </div>
+        <div id="matches-content" class="matches-list"></div>
+        
+        <div class="view-header" style="margin-top: 2rem;">
+          <h2>💡 Smart Suggestions</h2>
+          <p>Personalized recommendations</p>
+        </div>
+        <div id="suggestions-content" class="suggestions-list"></div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="profile-view" class="view">
+        <div class="view-header">
+          <h2>👤 Your Profile</h2>
+        </div>
+        <div id="profile-content" class="profile-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="create-event-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('create-event-modal')">&times;</span>
+      <h2>Create Event</h2>
+      <input type="text" id="event-title" placeholder="Event Title" required>
+      <textarea id="event-description" placeholder="Description" rows="3"></textarea>
+      <input type="datetime-local" id="event-date" required>
+      <input type="text" id="event-location" placeholder="Location">
+      <input type="text" id="event-category" placeholder="Category (e.g., social, academic)">
+      <input type="number" id="event-max" placeholder="Max Participants (optional)">
+      <button onclick="createEvent()" class="btn btn-primary">Create Event</button>
+    </div>
+  </div>
+
+  <div id="create-group-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('create-group-modal')">&times;</span>
+      <h2>Create Study Group</h2>
+      <input type="text" id="group-name" placeholder="Group Name" required>
+      <textarea id="group-description" placeholder="Description" rows="3"></textarea>
+      <input type="text" id="group-course" placeholder="Course Code (e.g., CS101)">
+      <input type="number" id="group-max" placeholder="Max Members (optional)">
+      <button onclick="createGroup()" class="btn btn-primary">Create Group</button>
+    </div>
+  </div>
+
+  <div id="message-modal" class="modal">
+    <div class="modal-content modal-message">
+      <span class="close" onclick="closeModal('message-modal')">&times;</span>
+      <p id="message-text"></p>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
